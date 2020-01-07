@@ -1,0 +1,18 @@
+<div class="container">
+    <h2>TODO LIST</h2>
+    <h3>Add Item</h3>
+    <p>
+        <input id="new-task" type="text" [(ngModel)]="task"><button (click)="addTask(1)">Add</button>
+    </p>
+    <div *ngIf="isLoaded">
+            <div *ngFor="let taskObj of tasks | keys">
+                    <h3>{{taskObj.key}}</h3>
+                    <ul >
+                        <li *ngFor="let tasklist of tasks[taskObj.key]">
+                            <label>{{tasklist.description}}</label><input type="text"><button class="edit" (click)="editTask($event,taskObj.key,tasklist)">Edit</button><button class="delete" (click)="deleteTask(taskObj.key,tasklist)">Delete</button>
+                            <button class="change-status" (click)="changeStatus(taskObj.key,tasklist)">Change status</button>
+                        </li>
+                    </ul>
+            </div>
+    </div>
+</div>
