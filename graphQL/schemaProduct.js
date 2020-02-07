@@ -1,7 +1,6 @@
 const graphql = require("graphql");
 const axios = require('axios');
 
-// PART 1 - ES6 DESTRUCTURING
 const { GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
@@ -9,95 +8,80 @@ const { GraphQLObjectType,
   GraphQLNonNull,
   GraphQLSchema } = graphql;
 
-
-// Task TYPE
-const TaskType = new GraphQLObjectType({
+const ProductType = new GraphQLObjectType({
   name: "Tasks",
   fields: () => ({
      id: { type: GraphQLInt },
      description: { type: GraphQLString },
-     state: { type: GraphQLInt },
-     userid: { type: GraphQLInt }
+     name: { type: GraphQLString },
+     category: { type: GraphQLInt },
+     price: { type: GraphQLString }
   })
 });
 
-// State type
-const StateType = new GraphQLObjectType({
-   name: "States",
-   fields: () => ({
-      id: { type: GraphQLInt },
-      name: { type: GraphQLString },
-   })
- });
 
-// ROOT QUERY
 const RootQuery = new GraphQLObjectType({
    name: "RootQueryType",
    fields: {
-      task: {
-          type: TaskType,
+      product: {
+          type: ProductType,
           args: {
-             id: { type: GraphQLInt },
-             userid: { type: GraphQLInt }
+             id: { type: GraphQLInt }
           },
           resolve(parent, args) {
-             return axios.get(`http://localhost:3000/tasks/${args.id}`).then(res => res.data)
+             return axios.get(`https://infinite-temple-08342.herokuapp.com/products/${args.id}`).then(res => res.data)
           }
      },
-      tasks: {
-          type: new GraphQLList(TaskType),
+      products: {
+          type: new GraphQLList(ProductType),
           resolve(parent, args) {
-             return axios.get(`http://localhost:3000/tasks`).then(res => res.data)
-          }
-     },
-      states: {
-          type: new GraphQLList(StateType),
-          resolve(parent, args) {
-             return axios.get(`http://localhost:3000/states`).then(res => res.data)
-          }
+            return axios.get(`https://infinite-temple-08342.herokuapp.com/products`).then(res => res.data)
+         }
      }
   }
 });
 const mutation = new GraphQLObjectType({
    name: "Mutation",
    fields: {
-     addTask: {
-     type: TaskType,
+     addProduct: {
+     type: ProductType,
      args: {
          description: { type: new GraphQLNonNull(GraphQLString) },
-         userid: { type: new GraphQLNonNull(GraphQLInt) },
-         state: { type: new GraphQLNonNull(GraphQLInt) }
+         name: { type: new GraphQLNonNull(GraphQLString) },
+         price: { type: new GraphQLNonNull(GraphQLString) },
+         category: { type: new GraphQLNonNull(GraphQLInt) }
        },
        resolve(parent, args) {
          return axios
-            .post(`http://localhost:3000/tasks/`, {
+            .post(`https://infinite-temple-08342.herokuapp.com/products/`, {
                 description: args.description,
-                state: args.state,
-                userid: args.userid
+                name: args.name,
+                price: args.price,
+                category: args.category
          }).then(res => res.data);
       }
       },
-      editTask: {
-         type: TaskType,
+      editProduct: {
+         type: ProductType,
          args: {
-           state: { type: GraphQLInt },
+           category: { type: GraphQLInt },
            description: { type: GraphQLString },
-           userid: { type: GraphQLInt },
+           name: { type: GraphQLString },
+           price: { type: GraphQLString },
            id: { type: new GraphQLNonNull(GraphQLInt) }
          },
          resolve(parent, args) {
-            return axios.patch(`http://localhost:3000/tasks/${args.id}`, args)
+            return axios.patch(`https://infinite-temple-08342.herokuapp.com/products/${args.id}`, args)
          .then(res => res.data);
          }
    },
-     deleteTask: {
-         type: TaskType,
+     deleteProduct: {
+         type: ProductType,
          args: {
             id: { type: new GraphQLNonNull(GraphQLInt) },
-            userid :{ type: new GraphQLNonNull(GraphQLInt) }
          },
          resolve(parentValue, args) {
-            return axios.delete(`http://localhost:3000/tasks/${args.id}`)
+            return axios.delete(`https://infinite-temple-08342.herokuapp.com/products/${args.id}`)
      .then(res => res.data);
          }
      }

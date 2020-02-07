@@ -1,0 +1,6 @@
+FROM node:alpine
+ENV tmp_dir /tmp
+RUN npm install -g json-server
+RUN echo '{"tasks": [{"id": 1,"description": "lorem ipsum doler sit amet","name": "anything","price": "5","category":"1"}]}' > /tmp/test.json
+ENTRYPOINT ["json-server", "--port", "8080", "--host", "0.0.0.0"]
+CMD ["/tmp/test.json"]
